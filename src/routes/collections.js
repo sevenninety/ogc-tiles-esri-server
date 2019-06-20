@@ -28,7 +28,7 @@ router.get(
                 crs: [crs, crs]
                 
             };
-            return collection;
+            return { collections: [ collection ] };
 
           
 
