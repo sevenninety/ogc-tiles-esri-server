@@ -1,7 +1,28 @@
 const debug = require("debug")("routes/collections");
 const router = require("express").Router();
+const proxy = require("express-http-proxy");
+const utils = require("./utils");
 
-router.get("/", (req, res) => {
+router.get(
+    "/",
+
+    proxy(process.env.ESRI_SERVICE, {
+        proxyReqPathResolver: req => {
+            return `${process.env.ESRI_SERVICE}/MapServer?f=json`;
+        },
+        userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+            const data = JSON.parse(proxyResData.toString("utf8"));
+            const bbox = utils.getBbox(data);
+            const crs = utils.getCRS(data); 
+            
+            return { spatial: {bbox, crs } };
+
+        }
+    })
+);
+
+
+/*
     collections = {
         links: [
             {
@@ -9,18 +30,6 @@ router.get("/", (req, res) => {
                 rel: "self",
                 type: "application/json",
                 title: "this document"
-            },
-            {
-                href: "http://data.example.org/collections.html",
-                rel: "alternate",
-                type: "text/html",
-                title: "this document as HTML"
-            },
-            {
-                href: "http://schemas.example.org/1.0/foobar.xsd",
-                rel: "describedBy",
-                type: "application/xml",
-                title: "XML schema for Acme Corporation data"
             }
         ],
         collections: [
@@ -32,21 +41,6 @@ router.get("/", (req, res) => {
                     {
                         href: "http://data.example.com/collections/buildings/items",
                         rel: "items"
-                    },
-                    {
-                        href: "http://example.com/concepts/buildings.html",
-                        rel: "describedBy",
-                        type: "text/html"
-                    },
-                    {
-                        href: "http://data.example.com/collections/buildings/maps",
-                        rel: "maps",
-                        type: "text/html"
-                    },
-                    {
-                        href: "http://data.example.com/collections/buildings/tiles",
-                        rel: "tiles",
-                        type: "text/html"
                     }
                 ],
                 extent: {
@@ -74,5 +68,5 @@ router.get("/:collectionId/tiles/:styleId/:tileMatrixSetId/:tileMatrix/:tileRow/
 router.get("/:collectionId/tiles/:styleId/:tileMatrixSetId/:tileMatrix/:tileRow/:tileCol/info", (req, res) => {
     res.send("tile info by collection");
 });
-
+*/
 module.exports = router;
