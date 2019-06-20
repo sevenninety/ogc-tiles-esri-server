@@ -12,8 +12,7 @@ router.get(
             return `${process.env.ESRI_SERVICE}/MapServer?f=json`;
         },
         userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
-            
-            // Build the basic Collection array informaiton 
+            // Build the basic Collection array informaiton
             const data = JSON.parse(proxyResData.toString("utf8"));
 
             // Assume title and id = service name
@@ -22,52 +21,41 @@ router.get(
             const description = data.description;
 
             const bbox = utils.getBbox(data);
-            const crs = utils.getCRS(data); 
+            const crs = utils.getCRS(data);
 
-            const collection = { 
+            const collection = {
                 id: id,
                 title: title,
                 description: description,
                 extent: {
-                    spatial: { bbox, crs },
+                    spatial: { bbox, crs }
                 },
                 crs: [crs, crs]
-                
             };
-            return { collections: [ collection ] };
 
-          
-
+            return { collections: [collection] };
         }
     })
 );
 
-    // This one looks for the specific collection. 
-    router.get(
-        "/:CollectionId",
-        proxy(process.env.ESRI_SERVICE, {
-            proxyReqPathResolver: req => {
-                return `${process.env.ESRI_SERVICE}/MapServer?f=json`;
-            },
-            userResDecorator: (proxyRes, proxyResData, userReq, userRes) => 
-            {
+// This one looks for the specific collection.
+router.get(
+    "/:CollectionId",
+    proxy(process.env.ESRI_SERVICE, {
+        proxyReqPathResolver: req => {
+            return `${process.env.ESRI_SERVICE}/MapServer?f=json`;
+        },
+        userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+            // Get the specific collection information
+            const data = JSON.parse(proxyResData.toString("utf8"));
 
-                // Get the specific collection information
-                const data = JSON.parse(proxyResData.toString("utf8"));
-                    
-                // Assume title and id = service name
-                const id = utils.GetMapServiceName();
-                const title = utils.GetMapServiceName();
-                const description = data.description;
-            
-            }
+            // Assume title and id = service name
+            const id = utils.GetMapServiceName();
+            const title = utils.GetMapServiceName();
+            const description = data.description;
         }
-        )
-    
-    
-
-    );
-
+    })
+);
 
 /*
     collections = {
