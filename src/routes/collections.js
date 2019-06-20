@@ -14,8 +14,23 @@ router.get(
             const data = JSON.parse(proxyResData.toString("utf8"));
             const bbox = utils.getBbox(data);
             const crs = utils.getCRS(data); 
-            
-            return { spatial: {bbox, crs } };
+            const id = utils.GetMapServiceName();
+            // Assume title and id = service name
+            const title = utils.GetMapServiceName();
+            const description = data.description;
+            const collection = { 
+                id: id,
+                title: title,
+                description: description,
+                extent: {
+                    spatial: { bbox, crs },
+                },
+                crs: [crs, crs]
+                
+            };
+            return collection;
+
+          
 
         }
     })
