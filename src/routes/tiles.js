@@ -1,0 +1,18 @@
+const debug = require("debug")("routes/tiles");
+const router = require("express").Router();
+const proxy = require("express-http-proxy");
+
+router.get(
+    "/:tileMatrixSetId/:tileMatrix/:tileRow/:tileCol",
+    proxy(process.env.SERVICE_ROOT, {
+        proxyReqPathResolver: (req) => {
+            return `${process.env.SERVICE_ROOT}/${req.params.tileMatrixSetId}/MapServer/tile/${req.params.tileMatrix}/${req.params.tileRow}/${req.params.tileCol}`;
+        }
+    })
+);
+
+router.get("/:tileMatrixSetId/:tileMatrix/:tileRow/:tileCol/info", (req, res) => {
+    res.send("tile info");
+});
+
+module.exports = router;
