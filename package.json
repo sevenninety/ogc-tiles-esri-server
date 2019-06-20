@@ -12,6 +12,7 @@
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "express-http-proxy": "^1.5.1",
-    "node-cache": "^4.2.0"
+    "js-yaml": "^3.13.1",
+    "swagger-ui-express": "^4.0.6"
   }
 }
