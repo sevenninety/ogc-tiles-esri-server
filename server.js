@@ -6,10 +6,16 @@ const all = require("./src/routes/all");
 // Set port the service will run on
 const port = process.env.PORT || 3000;
 
+// Set port
 app.set("port", process.env.PORT || 5050);
 
 // Configure express router to pick up routes
 app.use("/", all);
+
+// Handle errors
+app.use((err, req, res, next) => {
+    debug(err);
+});
 
 // Start server
 debug(`Listening on port ${port}`);

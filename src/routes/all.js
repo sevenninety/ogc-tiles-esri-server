@@ -7,6 +7,7 @@ const tiles = require("./tiles");
 const collections = require("./collections");
 const landingPage = require("./landingPage");
 
+// Configure routes
 router.use("/", landingPage);
 router.use("/conformance", conformance);
 router.use("/collections", collections);

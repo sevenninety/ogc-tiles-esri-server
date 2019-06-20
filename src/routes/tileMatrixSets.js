@@ -2,6 +2,7 @@ const debug = require("debug")("routes/tileMatrixSets");
 const router = require("express").Router();
 const proxy = require("express-http-proxy");
 
+// Gets all tile matrixes
 router.get(
     "/",
     proxy(process.env.ESRI_SERVICE, {
@@ -15,6 +16,7 @@ router.get(
     })
 );
 
+// Gets a tile matrixe
 router.get(
     "/:tileMatrixSetId",
     proxy(process.env.ESRI_SERVICE, {
