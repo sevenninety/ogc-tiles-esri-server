@@ -3,6 +3,7 @@ const router = require("express").Router();
 const proxy = require("express-http-proxy");
 const utils = require("./utils");
 
+// Get generic request to "collections"
 router.get(
     "/",
 
@@ -11,13 +12,18 @@ router.get(
             return `${process.env.ESRI_SERVICE}/MapServer?f=json`;
         },
         userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+            
+            // Build the basic Collection array informaiton 
             const data = JSON.parse(proxyResData.toString("utf8"));
-            const bbox = utils.getBbox(data);
-            const crs = utils.getCRS(data); 
-            const id = utils.GetMapServiceName();
+
             // Assume title and id = service name
+            const id = utils.GetMapServiceName();
             const title = utils.GetMapServiceName();
             const description = data.description;
+
+            const bbox = utils.getBbox(data);
+            const crs = utils.getCRS(data); 
+
             const collection = { 
                 id: id,
                 title: title,
@@ -35,6 +41,32 @@ router.get(
         }
     })
 );
+
+    // This one looks for the specific collection. 
+    router.get(
+        "/:CollectionId",
+        proxy(process.env.ESRI_SERVICE, {
+            proxyReqPathResolver: req => {
+                return `${process.env.ESRI_SERVICE}/MapServer?f=json`;
+            },
+            userResDecorator: (proxyRes, proxyResData, userReq, userRes) => 
+            {
+
+                // Get the specific collection information
+                const data = JSON.parse(proxyResData.toString("utf8"));
+                    
+                // Assume title and id = service name
+                const id = utils.GetMapServiceName();
+                const title = utils.GetMapServiceName();
+                const description = data.description;
+            
+            }
+        }
+        )
+    
+    
+
+    );
 
 
 /*
