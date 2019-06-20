@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/5fc44bff-f23d-4177-9cb6-0dfc54edb8a1/resourceGroups/ogc-hackathon/providers/Microsoft.Web/sites/ogc-tiles-esri-server",
+    "appService.deploySubpath": ""
+}

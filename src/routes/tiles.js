@@ -4,9 +4,9 @@ const proxy = require("express-http-proxy");
 
 router.get(
     "/:tileMatrixSetId/:tileMatrix/:tileRow/:tileCol",
-    proxy(process.env.SERVICE_ROOT, {
+    proxy(process.env.ESRI_SERVICE, {
         proxyReqPathResolver: (req) => {
-            return `${process.env.SERVICE_ROOT}/${req.params.tileMatrixSetId}/MapServer/tile/${req.params.tileMatrix}/${req.params.tileRow}/${req.params.tileCol}`;
+            return `${process.env.ESRI_SERVICE}/MapServer/tile/${req.params.tileMatrix}/${req.params.tileRow}/${req.params.tileCol}`;
         }
     })
 );
