@@ -53,6 +53,16 @@ router.get(
             const id = utils.GetMapServiceName();
             const title = utils.GetMapServiceName();
             const description = data.description;
+
+            // Do a check that we actually are getting the right collection
+            if (userReq.params.CollectionId != id) 
+            {
+                //TODO: Throw some kind of error
+            }
+
+            // TODO: Fill in the collection parameters and return
+            // TODO: For now just return the collection name
+            return  userReq.params.CollectionId;
         }
     })
 );
