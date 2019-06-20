@@ -1,7 +1,6 @@
 const debug = require("debug")("routes/tiles");
 const router = require("express").Router();
 const proxy = require("express-http-proxy");
-const cache = require("node-cache");
 
 // Gets a tile
 router.get(
@@ -11,7 +10,7 @@ router.get(
 
             /*
             //We thought we needed to invert the TileRow because WMTS 0,0 is top-left  and ArcGIS 0,0 is bottom left
-            //And so  we cheated because the max tile row is 2 power x where x is tile matrix  
+            //And so  we cheated because the max tile row is 2 power x where x is tile matrix
             var requestTileRow = parseInt(req.params.tileRow);
             var requestTileMatrix = parseInt(req.params.tileMatrix);
             var maxRow = Math.pow(2, requestTileMatrix) - 1;
