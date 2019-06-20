@@ -1,18 +1,18 @@
 openapi: 3.0.0
 
 servers:
-    - description: OGC Tiles from Esri Service
+    - description: OGC API-Tiles from ArcGIS Online Service
       url: https://ogc-tiles-esri-server.azurewebsites.net
 info:
     title: |-
-        OGC API Maps and Tiles (preliminary DRAFT)
+        OGC API Maps and Tiles (hackathon proof of concept)
     description: |-
-        Test tiles service for OGC Hackathon London 2019
+        Test OCG API tiles service for OGC Hackathon London 2019
 
     version: "1.0.0"
     contact:
-        name: Jaon Maso
-        email: joan.maso@uab.cat
+        name: adam branscomb
+        email: abranscomb@esriuk.com
     license:
         name: OGC License
         url: "https://raw.githubusercontent.com/opengeospatial/OGC-API-Map-Tiles/master/LICENSE"
@@ -20,21 +20,9 @@ tags:
     - name: Capabilities
       description: |-
           essential characteristics of this API
-    - name: Features
-      description: |-
-          access to data (features)
     - name: Tiles
       description: |-
           access to data representations, partitioned into a hierarchy of tiles (renderizations or vector tiles).
-    - name: Maps
-      description: |-
-          access to map renderizations of collections.
-    - name: FeatureInfos
-      description: |-
-          access to information about a point in a map or a tile.
-    - name: MultiTiles
-      description: |-
-          access to information about retriving multiple tiles in a single request.
 paths:
     "/":
         get:
@@ -172,174 +160,6 @@ paths:
                     $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/responses/NotFound"
                 "500":
                     $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/responses/ServerError"
-        patch:
-            tags:
-                - Capabilities
-            summary: |-
-                update parts of the style metadata
-            description: |-
-                IMPORTANT: This operation is defined by Clemens P. in the Testbed 15. It is included here for INFORMATION ONLY But is OUT OF SCOPE for Maps and Tiles.
-
-                Update selected elements of the metadata for
-                the collection with the id `collectionId`.
-
-                The only members that may be updated at this
-                time are `styles` and `defaultStyle`.
-
-                The PATCH semantics in this operation are defined by
-                RFC 7396 (JSON Merge Patch). From the specification:
-
-                _"A JSON merge patch document describes changes to be
-                made to a target JSON document using a syntax that
-                closely mimics the document being modified. Recipients
-                of a merge patch document determine the exact set of
-                changes being requested by comparing the content of
-                the provided patch against the current content of the
-                target document. If the provided merge patch contains
-                members that do not appear within the target, those
-                members are added. If the target does contain the
-                member, the value is replaced. Null values in the
-                merge patch are given special meaning to indicate
-                the removal of existing values in the target."_
-
-                Some examples:
-
-                To add or update the default style, just send
-
-                ```
-                {
-                  "defaultStyle": "night"
-                }
-                ```
-
-                To remove the default style, send
-
-                ```
-                {
-                  "defaultStyle": null
-                }
-                ```
-
-                For arrays the complete array needs to be sent. I.e., to
-                update the list of styles, send the complete new array value.
-
-                To remove all styles, send
-
-                ```
-                {
-                  "styles": null
-                }
-                ```
-
-                This operation is only available to registered
-                users.
-            operationId: patchCollectionMetadata
-            security:
-                - BasicAuth: []
-            parameters:
-                - $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/parameters/collectionId"
-            requestBody:
-                description: |-
-                    The updated style information for the collection.
-                content:
-                    application/merge-patch+json:
-                        schema:
-                            $ref: "#/components/schemas/collectionInfo-patch"
-            responses:
-                "204":
-                    $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/responses/Updated"
-                "400":
-                    description: |-
-                        Malformed patch document.
-                "401":
-                    $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/responses/UnauthorizedAccess"
-                "404":
-                    $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/responses/NotFound"
-                "415":
-                    description: |-
-                        Unsupported patch document.
-                    headers:
-                        Accept-Patch:
-                            description: |-
-                                supported patch document media types
-                            schema:
-                                type: string
-                "422":
-                    description: |-
-                        Unprocessable request. The patch document appears
-                        to be valid, but the server is incapable of processing
-                        the request.
-                "500":
-                    $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/responses/ServerError"
-    "/collections/{collectionId}/items":
-        get:
-            tags:
-                - Features
-            summary: retrieve features of the feature collection
-            description: |-
-                IMPORTANT: This operation is defined by in OGC API features. It is included here for INFORMATION ONLY But is OUT OF SCOPE for Maps and Tiles.
-            operationId: getFeatures
-            parameters:
-                - $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/parameters/collectionId"
-                - $ref: "#/components/parameters/f-json-html"
-                - $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/parameters/limit"
-                - $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/parameters/offset"
-                - $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/parameters/bbox"
-                - $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/parameters/datetime"
-                - $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/parameters/resultType"
-                - $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/parameters/properties"
-                - name: f_code
-                  in: query
-                  description: Filter the collection by f_code
-                  required: false
-                  style: form
-                  explode: false
-                  schema:
-                      type: string
-            responses:
-                "200":
-                    description: |-
-                        Information about the feature collection plus the first features
-                        matching the selection parameters.
-                    content:
-                        application/geo+json:
-                            schema:
-                                $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/schemas/featureCollectionGeoJSON"
-                        text/html:
-                            schema:
-                                type: string
-                "404":
-                    $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/responses/NotFound"
-                "500":
-                    $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/responses/ServerError"
-    "/collections/{collectionId}/items/{featureId}":
-        get:
-            tags:
-                - Features
-            summary: fetch a feature
-            description: |-
-                IMPORTANT: This operation is defined by in OGC API features. It is included here for INFORMATION ONLY But is OUT OF SCOPE for Maps and Tiles.
-            operationId: getFeature
-            parameters:
-                - $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/parameters/collectionId"
-                - $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/parameters/featureId"
-                - $ref: "#/components/parameters/f-json-html"
-                - $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/parameters/properties"
-            responses:
-                "200":
-                    description: |-
-                        A feature.
-                    content:
-                        application/geo+json:
-                            schema:
-                                $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/schemas/featureGeoJSON"
-                        text/html:
-                            schema:
-                                type: string
-                "404":
-                    $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/responses/NotFound"
-                "500":
-                    $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/responses/ServerError"
     "/tileMatrixSets":
         get:
             tags:
@@ -408,20 +228,6 @@ paths:
                             schema:
                                 type: string
                                 format: binary
-                        image/png:
-                            schema:
-                                type: string
-                                format: binary
-                        image/gif:
-                            schema:
-                                type: string
-                                format: binary
-                        image/mvt:
-                            schema:
-                                type: string
-                        application/geo+json:
-                            schema:
-                                $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/schemas/featureCollectionGeoJSON"
                 "404":
                     $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/responses/NotFound"
                 "500":
@@ -677,17 +483,6 @@ paths:
                             schema:
                                 type: string
                                 format: binary
-                        image/png:
-                            schema:
-                                type: string
-                                format: binary
-                        image/gif:
-                            schema:
-                                type: string
-                                format: binary
-                        application/geo+json:
-                            schema:
-                                $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/schemas/featureCollectionGeoJSON"
                 "404":
                     $ref: "https://api.swaggerhub.com/domains/joanma747/ogc-api/1.0.0#/components/responses/NotFound"
                 "500":
