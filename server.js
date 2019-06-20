@@ -37,7 +37,7 @@ app.get("/tileMatrixSet", (req, res) => {
 });
 
 app.get("/tiles/:tileMatrixSetId/:tileMatrix/:tileRow/:tileCol", (req, res) => {
-    proxy.web(req, res, { target: `${process.env.SERVICE_ROOT}/MapServer/tile/${req.params.tileMatrix}/${req.params.tileRow}/${req.params.tileCol}` });
+    proxy.web(req, res, { target: `${process.env.SERVICE_ROOT}/${req.params.tileMatrixSetId}/MapServer/tile/${req.params.tileMatrix}/${req.params.tileRow}/${req.params.tileCol}` });
 });
 
 app.get("/tiles/:tileMatrixSetId/:tileMatrix/:tileRow/:tileCol/info", (req, res) => {
