@@ -33,12 +33,6 @@ router.get(
             return `${process.env.ESRI_SERVICE_ROOT}/${process.env.DEFAULT_SERVICE}/MapServer?f=json`;
         },
         userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
-            // Do a check that we actually are getting the right collection
-            if (userReq.params.collectionId != id) {
-                //TODO: Throw some kind of error
-                debug("Missing collectionId");
-            }
-
             // Get the specific collection information
             const data = JSON.parse(proxyResData.toString("utf8"));
 
@@ -46,13 +40,28 @@ router.get(
             const collection = getCollection(data);
 
             // In ArcGIS we don't have the concept of styles for Raster tiles
-            // Therefore we are going to use the name as the style
-            collection.styles = [{ style: id, title: title }];
+            // Therefore we are going to set a default
+            collection.styles = [{ style: "default", title: "default", links: [] }];
+            collection.defaultStyle = "default";
 
             collection.mapCRSSetLink = [
                 {
                     id: data.fullExtent.spatialReference.latestWkid,
-                    links: [{ href: crsLink, type: "application/xml", rel: "describedBy" }]
+                    links: [{ href: "http://www.opengis.net/def/crs/OGC/1.3/CRS84", type: "application/xml", rel: "describedBy" }]
+                }
+            ];
+
+            // Just create a single tileMatrixSet
+            collection.tileMatrixSetLink = [
+                {
+                    id: "default",
+                    links: [
+                        {
+                            href: "https://example.com/api/1.0/tileMatrixSet/WebMercatorQuad?f=ogc-tms-1-0",
+                            type: "application/vnd.ogc-tms-1-0.tms+json",
+                            rel: "tileMatrixSet"
+                        }
+                    ]
                 }
             ];
 
@@ -82,13 +91,13 @@ function getCollection(data) {
 
     // Assume title and id = service name
     return {
-        id: utils.GetMapServiceName(),
-        title: utils.GetMapServiceName(),
+        id: utils.getMapServiceName(),
+        title: utils.getMapServiceName(),
         description: data.description,
         extent: {
             spatial: { bbox, crs: crsLink }
         },
-        crs: [crsLink, crsLink]
+        crs: [crsLink]
     };
 }
 
