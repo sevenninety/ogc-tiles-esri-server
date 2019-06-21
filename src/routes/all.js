@@ -1,5 +1,3 @@
-"use strict";
-
 const router = require("express").Router();
 const swaggerUi = require("swagger-ui-express");
 const yaml = require("js-yaml");

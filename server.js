@@ -1,5 +1,3 @@
-"use strict";
-
 const debug = require("debug")("server");
 const express = require("express");
 const app = express();
