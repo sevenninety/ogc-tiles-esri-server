@@ -9,9 +9,8 @@ exports.getBbox = mapServerJson => {
     return bbox;
 };
 
-exports.GetMapServiceName = () => {
-    const mapServiceParts = process.env.ESRI_SERVICE.split("/");
-    return mapServiceParts[mapServiceParts.length - 1];
+exports.getMapServiceName = () => {
+    return process.env.DEFAULT_SERVICE;
 };
 
 // Extract crs  from mapServerJSON in format http://www.opengis.net/def/crs/EPSG/0/4326
