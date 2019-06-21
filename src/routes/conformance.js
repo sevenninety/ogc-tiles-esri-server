@@ -1,7 +1,8 @@
-const debug = require("debug")("routes/conformance");
+"use strict";
+
 const router = require("express").Router();
 
-// Not sure what to send here - this is copied from the Esri swagger page
+// Not sure what to send here - this is copied from the OGC swagger page
 router.get("/", (req, res) => {
     const conformance = {
         links: [

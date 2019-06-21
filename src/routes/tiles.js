@@ -1,11 +1,12 @@
-const debug = require("debug")("routes/tiles");
+"use strict"
+
 const router = require("express").Router();
 const proxy = require("express-http-proxy");
 
 // Gets a tile
 router.get(
     "/:tileMatrixSetId/:tileMatrix/:tileRow/:tileCol",
-    proxy(process.env.ESRI_SERVICE, {
+    proxy(process.env.ESRI_SERVICE_ROOT, {
         proxyReqPathResolver: req => {
 
             /*
@@ -18,7 +19,7 @@ router.get(
             var response = `${process.env.ESRI_SERVICE}/MapServer/tile/${req.params.tileMatrix}/${requestTileRow}/${req.params.tileCol}`;
             */
 
-            return `${process.env.ESRI_SERVICE}/MapServer/tile/${req.params.tileMatrix}/${req.params.tileRow}/${req.params.tileCol}`;
+            return `${process.env.ESRI_SERVICE_ROOT}/${process.env.DEFAULT_SERVICE}/MapServer/tile/${req.params.tileMatrix}/${req.params.tileRow}/${req.params.tileCol}`;
         }
     })
 );

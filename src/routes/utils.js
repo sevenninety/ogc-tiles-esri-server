@@ -1,3 +1,5 @@
+"use strict";
+
 const openGISURL = "http://www.opengis.net/def/crs/EPSG/0/";
 
 // Extract bbox  from mapServerJSON in format [[-180, -90, 180, 90]]

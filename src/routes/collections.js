@@ -1,3 +1,5 @@
+"use strict";
+
 const debug = require("debug")("routes/collections");
 const router = require("express").Router();
 const proxy = require("express-http-proxy");
@@ -9,9 +11,9 @@ const utils = require("./utils");
 router.get(
     "/",
 
-    proxy(process.env.ESRI_SERVICE, {
+    proxy(process.env.ESRI_SERVICE_ROOT, {
         proxyReqPathResolver: req => {
-            return `${process.env.ESRI_SERVICE}/MapServer?f=json`;
+            return `${process.env.ESRI_SERVICE_ROOT}/${process.env.DEFAULT_SERVICE}/MapServer?f=json`;
         },
         userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
             // Build the basic Collection array informaiton
@@ -35,17 +37,17 @@ router.get(
                 crs: [crsLink, crsLink]
             };
 
-            return {collections: {collection}};
+            return { collections: { collection } };
         }
     })
 );
 
 // This one looks for the specific collection, including style information
 router.get(
-    "/:CollectionId",
-    proxy(process.env.ESRI_SERVICE, {
+    "/:collectionId",
+    proxy(process.env.ESRI_SERVICE_ROOT, {
         proxyReqPathResolver: req => {
-            return `${process.env.ESRI_SERVICE}/MapServer?f=json`;
+            return `${process.env.ESRI_SERVICE_ROOT}/${process.env.DEFAULT_SERVICE}/MapServer?f=json`;
         },
         userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
             // Get the specific collection information
@@ -57,9 +59,9 @@ router.get(
             const description = data.description;
 
             // Do a check that we actually are getting the right collection
-            if (userReq.params.CollectionId != id) 
-            {
+            if (userReq.params.collectionId != id) {
                 //TODO: Throw some kind of error
+                debug("Missing collectionId");
             }
 
             const bbox = utils.getBbox(data);
@@ -67,14 +69,16 @@ router.get(
 
             // In ArcGIS we don't have the concept of styles for Raster tiles
             // Therefore we are going to use the name as the style
-            const styles = [ { style: id, title: title} ];
+            const styles = [{ style: id, title: title }];
 
-            const mapCRSSetLink = [ { 
-                id: apServerJson.fullExtent.spatialReference.latestWkid,
-                links: [ { href: crsLink, type: "application/xml", "rel": "describedBy" } ]
-            }];
+            const mapCRSSetLink = [
+                {
+                    id: apServerJson.fullExtent.spatialReference.latestWkid,
+                    links: [{ href: crsLink, type: "application/xml", rel: "describedBy" }]
+                }
+            ];
 
-            return  userReq.params.CollectionId;
+            return userReq.params.collectionId;
         }
     })
 );
@@ -118,12 +122,20 @@ router.get(
     res.send(collections);
 });
 
-router.get("/:collectionId/tiles/:styleId/:tileMatrixSetId/:tileMatrix/:tileRow/:tileCol", (req, res) => {
-    res.send("tile by collection");
-});
+*/
+
+// Display one of the Esri tiles using the styleId as the service name
+router.get(
+    "/:collectionId/tiles/:styleId/:tileMatrixSetId/:tileMatrix/:tileRow/:tileCol",
+    proxy(process.env.ESRI_SERVICE_ROOT, {
+        proxyReqPathResolver: req => {
+            return `${process.env.ESRI_SERVICE_ROOT}/${req.params.styleId}/MapServer/tile/${req.params.tileMatrix}/${req.params.tileRow}/${req.params.tileCol}`;
+        }
+    })
+);
 
 router.get("/:collectionId/tiles/:styleId/:tileMatrixSetId/:tileMatrix/:tileRow/:tileCol/info", (req, res) => {
     res.send("tile info by collection");
 });
-*/
+
 module.exports = router;

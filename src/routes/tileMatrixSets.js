@@ -1,3 +1,5 @@
+"use strict";
+
 const debug = require("debug")("routes/tileMatrixSets");
 const router = require("express").Router();
 const proxy = require("express-http-proxy");
@@ -5,9 +7,9 @@ const proxy = require("express-http-proxy");
 // Gets all tile matrixes
 router.get(
     "/",
-    proxy(process.env.ESRI_SERVICE, {
+    proxy(process.env.ESRI_SERVICE_ROOT, {
         proxyReqPathResolver: req => {
-            return `${process.env.ESRI_SERVICE}/MapServer?f=json`;
+            return `${process.env.ESRI_SERVICE_ROOT}/${process.env.DEFAULT_SERVICE}/MapServer?f=json`;
         },
         userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
             const data = JSON.parse(proxyResData.toString("utf8"));
@@ -19,9 +21,9 @@ router.get(
 // Gets a tile matrixe
 router.get(
     "/:tileMatrixSetId",
-    proxy(process.env.ESRI_SERVICE, {
+    proxy(process.env.ESRI_SERVICE_ROOT, {
         proxyReqPathResolver: req => {
-            return `${process.env.ESRI_SERVICE}/MapServer?f=json`;
+            return `${process.env.ESRI_SERVICE_ROOT}/${process.env.DEFAULT_SERVICE}/MapServer?f=json`;
         },
         userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
             const data = JSON.parse(proxyResData.toString("utf8"));
@@ -35,6 +37,8 @@ router.get(
  * @param {object} info Data from the Esri service
  */
 function getTileMatrix(info) {
+    debug("getTileMatrix");
+
     // Define data for Google scheme
     const levels = [
         { id: 0, scaleDenominator: 559082264.0287178, width: 1, height: 1 },
