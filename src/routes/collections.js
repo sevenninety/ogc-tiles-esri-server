@@ -3,6 +3,7 @@ const router = require("express").Router();
 const proxy = require("express-http-proxy");
 const utils = require("./utils");
 
+
 ////////////////////////////////////////
 // Get generic request to "collections"
 ////////////////////////////////////////
@@ -73,6 +74,8 @@ router.get(
                 id: apServerJson.fullExtent.spatialReference.latestWkid,
                 links: [ { href: crsLink, type: "application/xml", "rel": "describedBy" } ]
             }];
+
+            const tileMatrixSets = utils.getTileMatrix(data); 
 
             return  userReq.params.CollectionId;
         }
