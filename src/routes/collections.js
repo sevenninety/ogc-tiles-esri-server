@@ -41,7 +41,7 @@ router.get(
 
             // In ArcGIS we don't have the concept of styles for Raster tiles
             // Therefore we are going to set a default
-            collection.styles = [{ style: "default", title: "default", links: [] }];
+            collection.styles = [{ id: "default", title: "default", links: [] }];
             collection.defaultStyle = "default";
 
             collection.mapCRSSetLink = [
