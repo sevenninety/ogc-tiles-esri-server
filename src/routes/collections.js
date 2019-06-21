@@ -39,6 +39,9 @@ router.get(
             // Get the collection
             const collection = getCollection(data);
 
+            // Set url path of service for use in href (it's different in Azure due to sandbox)
+            const path = process.env.PORT ? `https://${userReq.host}` : `${userReq.protocol}://${userReq.host}:${userReq.app.get("port")}`;
+
             // In ArcGIS we don't have the concept of styles for Raster tiles
             // Therefore we are going to set a default
             collection.styles = [{ id: "default", title: "default", links: [] }];
@@ -51,13 +54,14 @@ router.get(
                 }
             ];
 
-            // Just create a single tileMatrixSet
+            // Just create a single tileMatrixSet and point the href to our matrix endpoint
+
             collection.tileMatrixSetLink = [
                 {
                     id: "default",
                     links: [
                         {
-                            href: "https://example.com/api/1.0/tileMatrixSet/WebMercatorQuad?f=ogc-tms-1-0",
+                            href: `${path}/tileMatrixSets/default`,
                             type: "application/vnd.ogc-tms-1-0.tms+json",
                             rel: "tileMatrixSet"
                         }

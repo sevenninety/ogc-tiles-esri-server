@@ -6,10 +6,8 @@ const all = require("./src/routes/all");
 // Set port the service will run on
 const port = process.env.PORT || 3000;
 
-// Set default for static content
-app.use(express.static('src/static'));
-
-app.set("port", process.env.PORT || 5050);
+// Set port the service will run on
+app.set("port", port);
 
 // Configure express router to pick up routes
 app.use("/", all);
