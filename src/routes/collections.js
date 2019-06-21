@@ -3,7 +3,9 @@ const router = require("express").Router();
 const proxy = require("express-http-proxy");
 const utils = require("./utils");
 
+////////////////////////////////////////
 // Get generic request to "collections"
+////////////////////////////////////////
 router.get(
     "/",
 
@@ -21,24 +23,24 @@ router.get(
             const description = data.description;
 
             const bbox = utils.getBbox(data);
-            const crs = utils.getCRS(data);
+            const crsLink = utils.getCRSLink(data);
 
             const collection = {
                 id: id,
                 title: title,
                 description: description,
                 extent: {
-                    spatial: { bbox, crs }
+                    spatial: { bbox, crs: crsLink }
                 },
-                crs: [crs, crs]
+                crs: [crsLink, crsLink]
             };
 
-            return { collections: [collection] };
+            return {collections: {collection}};
         }
     })
 );
 
-// This one looks for the specific collection.
+// This one looks for the specific collection, including style information
 router.get(
     "/:CollectionId",
     proxy(process.env.ESRI_SERVICE, {
@@ -60,8 +62,18 @@ router.get(
                 //TODO: Throw some kind of error
             }
 
-            // TODO: Fill in the collection parameters and return
-            // TODO: For now just return the collection name
+            const bbox = utils.getBbox(data);
+            const crsLink = utils.getCRSLink(data);
+
+            // In ArcGIS we don't have the concept of styles for Raster tiles
+            // Therefore we are going to use the name as the style
+            const styles = [ { style: id, title: title} ];
+
+            const mapCRSSetLink = [ { 
+                id: apServerJson.fullExtent.spatialReference.latestWkid,
+                links: [ { href: crsLink, type: "application/xml", "rel": "describedBy" } ]
+            }];
+
             return  userReq.params.CollectionId;
         }
     })

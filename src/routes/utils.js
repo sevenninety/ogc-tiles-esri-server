@@ -13,7 +13,7 @@ exports.GetMapServiceName = () => {
 };
 
 // Extract crs  from mapServerJSON in format http://www.opengis.net/def/crs/EPSG/0/4326
-exports.getCRS = mapServerJson => {
+exports.getCRSLink = mapServerJson => {
     const crs = mapServerJson.fullExtent.spatialReference.latestWkid;
     return openGISURL + crs;
 };
